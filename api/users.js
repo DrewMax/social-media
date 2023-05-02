@@ -57,4 +57,29 @@ Thought.deleteMany({ username: req.params.id })
 .then(() => res.json('Thoughts deleted!'))
 .catch(err => res.status(400).json('Error: ' + err));
 })
-.catch
+.catch (err => res.status(400).json('Error: ' + err));
+});
+
+// POST to add a new friend to a user's friend list
+router.route('/users/:userId/friends/:friendId').post((req, res) => {
+User.findByIdAndUpdate(
+req.params.userId,
+{ $addToSet: { friends: req.params.friendId } },
+{ new: true }
+)
+.then(updatedUser => res.json(updatedUser))
+.catch(err => res.status(400).json('Error: ' + err));
+});
+
+// DELETE to remove a friend from a user's friend list
+router.route('/users/:userId/friends/:friendId').delete((req, res) => {
+User.findByIdAndUpdate(
+req.params.userId,
+{ $pull: { friends: req.params.friendId } },
+{ new: true }
+)
+.then(updatedUser => res.json(updatedUser))
+.catch(err => res.status(400).json('Error: ' + err));
+});
+
+module.exports = router;
